@@ -7,6 +7,27 @@ enum EscapiVersionType {
   library,
 }
 
+enum CaptureProperties {
+  brightness,
+  contrast,
+  hue,
+  saturation,
+  sharpness,
+  gamma,
+  colorenable,
+  whitebalance,
+  backlightcompensation,
+  gain,
+  pan,
+  tilt,
+  roll,
+  zoom,
+  exposure,
+  iris,
+  focus,
+  propMax,
+}
+
 class _FfiEscapiParams extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> buf;
   @ffi.UnsignedInt()
@@ -105,6 +126,32 @@ class Escapi {
     return name;
   }
 
+  int setCaptureProperty(
+    int deviceIndex,
+    CaptureProperties prop,
+    double value,
+    int autoval,
+  ) {
+    assert(value >= 0);
+    assert(value <= 1);
+    return _lib!.lookupFunction<
+            ffi.Int Function(ffi.UnsignedInt, ffi.Int, ffi.Float, ffi.Int),
+            int Function(int, int, double, int)>('setCaptureProperty')(
+        deviceIndex, prop.index, value, autoval);
+  }
+
+  double getCapturePropertyValue(int deviceIndex, CaptureProperties prop) =>
+      _lib!.lookupFunction<
+          ffi.Float Function(ffi.UnsignedInt, ffi.Int),
+          double Function(
+              int, int)>('getCapturePropertyValue')(deviceIndex, prop.index);
+
+  int getCapturePropertyAuto(int deviceIndex, CaptureProperties prop) =>
+      _lib!.lookupFunction<
+          ffi.Int Function(ffi.UnsignedInt, ffi.Int),
+          int Function(
+              int, int)>('getCapturePropertyAuto')(deviceIndex, prop.index);
+
   int getCaptureErrorLine(int deviceIndex) => _lib!
       .lookupFunction<ffi.Int Function(ffi.UnsignedInt), int Function(int)>(
           'getCaptureErrorLine')(deviceIndex);
@@ -133,6 +180,15 @@ class Device {
 
   String getName({int len = 256}) =>
       escapi.getCaptureDeviceName(index, len: len);
+
+  int setProperty(CaptureProperties prop, double value, int autoval) =>
+      escapi.setCaptureProperty(index, prop, value, autoval);
+
+  double getPropertyValue(CaptureProperties prop) =>
+      escapi.getCapturePropertyValue(index, prop);
+
+  int getPropertyAuto(CaptureProperties prop) =>
+      escapi.getCapturePropertyAuto(index, prop);
 
   int getErrorLine() => escapi.getCaptureErrorLine(index);
 
