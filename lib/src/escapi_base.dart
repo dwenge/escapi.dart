@@ -58,31 +58,21 @@ class Escapi {
     return null;
   }
 
-  void doCapture(int deviceIndex) {
-    final f = _lib!
-        .lookupFunction<ffi.Void Function(ffi.UnsignedInt), void Function(int)>(
-            'doCapture');
-    f(deviceIndex);
-  }
+  void doCapture(int deviceIndex) => _lib!
+      .lookupFunction<ffi.Void Function(ffi.UnsignedInt), void Function(int)>(
+          'doCapture')(deviceIndex);
 
-  int isCaptureDone(int deviceIndex) {
-    final f = _lib!
-        .lookupFunction<ffi.Int Function(ffi.UnsignedInt), int Function(int)>(
-            'isCaptureDone');
-    return f(deviceIndex);
-  }
+  int isCaptureDone(int deviceIndex) => _lib!
+      .lookupFunction<ffi.Int Function(ffi.UnsignedInt), int Function(int)>(
+          'isCaptureDone')(deviceIndex);
 
-  void deinitCapture(int deviceIndex) {
-    final f = _lib!
-        .lookupFunction<ffi.Void Function(ffi.UnsignedInt), void Function(int)>(
-            'deinitCapture');
-    f(deviceIndex);
-  }
+  void deinitCapture(int deviceIndex) => _lib!
+      .lookupFunction<ffi.Void Function(ffi.UnsignedInt), void Function(int)>(
+          'deinitCapture')(deviceIndex);
 
-  int countCaptureDevices() {
-    return _lib!.lookupFunction<ffi.Int Function(), int Function()>(
-        'countCaptureDevices')();
-  }
+  int countCaptureDevices() =>
+      _lib!.lookupFunction<ffi.Int Function(), int Function()>(
+          'countCaptureDevices')();
 
   int getVersion({EscapiVersionType type = EscapiVersionType.library}) {
     switch (type) {
@@ -93,15 +83,11 @@ class Escapi {
     }
   }
 
-  int _getDllVersion() {
-    return _lib!.lookupFunction<ffi.Int Function(), int Function()>(
-        'ESCAPIDLLVersion')();
-  }
+  int _getDllVersion() => _lib!
+      .lookupFunction<ffi.Int Function(), int Function()>('ESCAPIDLLVersion')();
 
-  int _getVersion() {
-    return _lib!
-        .lookupFunction<ffi.Int Function(), int Function()>('ESCAPIVersion')();
-  }
+  int _getVersion() => _lib!
+      .lookupFunction<ffi.Int Function(), int Function()>('ESCAPIVersion')();
 
   String getCaptureDeviceName(int deviceIndex, {int len = 256}) {
     final f = _lib!.lookupFunction<
@@ -118,6 +104,14 @@ class Escapi {
     pffi.calloc.free(_buf);
     return name;
   }
+
+  int getCaptureErrorLine(int deviceIndex) => _lib!
+      .lookupFunction<ffi.Int Function(ffi.UnsignedInt), int Function(int)>(
+          'getCaptureErrorLine')(deviceIndex);
+
+  int getCaptureErrorCode(int deviceIndex) => _lib!
+      .lookupFunction<ffi.Int Function(ffi.UnsignedInt), int Function(int)>(
+          'getCaptureErrorCode')(deviceIndex);
 }
 
 class Device {
@@ -137,9 +131,12 @@ class Device {
     return buf;
   }
 
-  String getName({int len = 256}) {
-    return escapi.getCaptureDeviceName(index, len: len);
-  }
+  String getName({int len = 256}) =>
+      escapi.getCaptureDeviceName(index, len: len);
+
+  int getErrorLine() => escapi.getCaptureErrorLine(index);
+
+  int getErrorCode() => escapi.getCaptureErrorCode(index);
 
   void free() {
     escapi.deinitCapture(index);
