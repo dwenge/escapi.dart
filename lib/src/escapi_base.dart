@@ -102,6 +102,22 @@ class Escapi {
     return _lib!
         .lookupFunction<ffi.Int Function(), int Function()>('ESCAPIVersion')();
   }
+
+  String getCaptureDeviceName(int deviceIndex, {int len = 256}) {
+    final f = _lib!.lookupFunction<
+        ffi.Void Function(ffi.UnsignedInt, ffi.Pointer<pffi.Utf8>, ffi.Int),
+        void Function(
+            int, ffi.Pointer<pffi.Utf8>, int)>('getCaptureDeviceName');
+
+    final ffi.Pointer<pffi.Utf8> _buf =
+        pffi.calloc.allocate<pffi.Utf8>(ffi.sizeOf<ffi.Uint8>() * len);
+
+    f(deviceIndex, _buf, len);
+
+    final name = _buf.toDartString(length: len);
+    pffi.calloc.free(_buf);
+    return name;
+  }
 }
 
 class Device {
@@ -119,6 +135,10 @@ class Device {
       buf[i] = params.p.ref.buf.elementAt(i).value;
     }
     return buf;
+  }
+
+  String getName({int len = 256}) {
+    return escapi.getCaptureDeviceName(index, len: len);
   }
 
   void free() {
