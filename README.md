@@ -3,15 +3,15 @@ https://github.com/jarikomppa/escapi
 ## ESCAPI
 - [x] ESCAPIDLLVersion
 - [x] ESCAPIVersion
-- [ ] countCaptureDevices
+- [x] countCaptureDevices
 - [x] deinitCapture
 - [x] doCapture
-- [ ] getCaptureDeviceName
-- [ ] getCaptureErrorCode
-- [ ] getCaptureErrorLine
-- [ ] getCapturePropertyAuto
-- [ ] getCapturePropertyValue
+- [x] getCaptureDeviceName
+- [x] getCaptureErrorCode
+- [x] getCaptureErrorLine
+- [x] getCapturePropertyAuto
+- [x] getCapturePropertyValue
 - [ ] initCOM
 - [x] initCapture
 - [x] isCaptureDone
-- [ ] setCaptureProperty
+- [x] setCaptureProperty
