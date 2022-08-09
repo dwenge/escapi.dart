@@ -62,8 +62,8 @@ class EscapiParams {
 
 class Escapi {
   static ffi.DynamicLibrary? _lib;
-  Escapi() {
-    _lib ??= ffi.DynamicLibrary.open('escapi.dll');
+  Escapi({String libpath = 'escapi.dll'}) {
+    _lib ??= ffi.DynamicLibrary.open(libpath);
   }
 
   Device? initCapture(int width, int height, {int deviceIndex = 0}) {
@@ -128,7 +128,7 @@ class Device {
 
   Uint8List capture() {
     escapi.doCapture(index);
-    while (escapi.isCaptureDone(index) == 0);
+    while (escapi.isCaptureDone(index) == 0) {}
     var buf = Uint8List(params.bufferLength);
     for (var i = 0; i < params.bufferLength; i++) {
       buf[i] = params.p.ref.buf.elementAt(i).value;
